@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, TouchableHighlight, Text, StyleSheet } from 'react-native';
+import { FlatList, View, TouchableHighlight, Text, StyleSheet, TextInput } from 'react-native';
 import uuid from 'react-native-uuid';
 
 import ExerciseCard from './ExerciseCard';
@@ -43,6 +43,38 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 18,
+    },
+    card: {
+        backgroundColor: '#fff',
+        padding: 10,
+        paddingTop: 10,
+        paddingBottom: 20,
+        margin: 10,
+        marginTop: 5,
+        marginBottom: 5,
+        flexDirection: "row",
+    },
+    exercisePart: {
+        width: "20%",
+        textAlign: "center",
+    },
+    exerciseText: {
+        fontSize: 28
+    },
+    exerciseTextInput_Init: {
+        fontSize: 28,
+        borderColor: '#edeeef',
+        borderWidth: 2,
+    },
+    exerciseTextInput_Red: {
+        fontSize: 28,
+        borderColor: '#edeeef',
+        borderWidth: 2,
+    },
+    exerciseTextInput_Green: {
+        fontSize: 28,
+        borderColor: '#edeeef',
+        borderWidth: 2,
     },
 });
 
@@ -92,10 +124,10 @@ class ExerciseList extends Component {
 
         for (let index = 0; index < ex.length; index++) {
             const element = ex[index];
-            debugger;
+            //debugger;
             //console.log("typeof(element): " + Object.prototype.toString.call(element));
-            //console.log("element.isCorrect: " + element.isCorrect);
-            //console.log("element.result: " + element.result);
+            console.log("element.isCorrect: " + element.isCorrect);
+            console.log("element.result: " + element.result);
 
         }
 
@@ -114,13 +146,63 @@ class ExerciseList extends Component {
         //this.setState({ exercises });
     }
 
+    handleChangeResult = (value, index) => {
+        //debugger;
+        this.setState({ result: value });
+
+        const green = "#0f0";
+        const red = "#f00";
+        if (this.state.leftOperand * this.state.rightOperator == value) {
+            this.setState({ isCorrect: true });
+            this.setState({ exerciseTextInput_Style: green });
+        } else {
+            this.setState({ isCorrect: false });
+            this.setState({ exerciseTextInput_Style: red });
+        }
+    }
+
+    renderItem = ({ item, index }) => {
+        //debugger;
+        console.log("item.id: " + item.id);
+        console.log("this.state.exercises: " + this.state.exercises[index].id);
+        console.log("this.state.exercises: " + this.state.exercises[item.id]);
+        return (
+            <View style={styles.card} isCorrect={this.state.exercises[index].isCorrect}>
+                <View style={styles.exercisePart}>
+                    <Text style={styles.exerciseText}>{item.leftOperand}</Text>
+                </View>
+                <View style={styles.exercisePart}>
+                    <Text style={styles.exerciseText}>{item.operator}</Text>
+                </View>
+                <View style={styles.exercisePart}>
+                    <Text style={styles.exerciseText}>{item.rightOperator}</Text>
+                </View>
+                <View style={styles.exercisePart}>
+                    <Text style={styles.exerciseText}>{item.equals}</Text>
+                </View>
+                <View style={styles.exercisePart}>
+                    <TextInput
+                        //style={[styles.exerciseTextInput, setBorder]}
+                        style={[styles.exerciseTextInput_Init, { borderColor: this.state.exercises[index].exerciseTextInput_Style }]}
+                        spellCheck={false}
+                        placeholder="?"
+                        value={this.state.exercises[index].result}
+                        keyboardType="numeric"
+                        onChangeText={this.handleChangeResult}
+                    />
+                </View>
+            </View>
+        )
+    }
+
+
     render() {
         return [
             <FlatList
                 style={styles.list}
                 data={this.state.exercises}
-                renderItem={({ item }) => <ExerciseCard exercise={item} />}
-                keyExtractor={item => item.id}
+                renderItem={ this.renderItem }
+                keyExtractor={(item, index) => item.id.toString()}
             />,
             <View>
                 <TouchableHighlight
