@@ -140,7 +140,7 @@ class ExerciseList extends Component {
         if (totalResult) {
             Alert.alert(
                 "Refresh",
-                "ענבר\nכל הכבוד!",
+                "ענבר\nכל הכבוד!\nהנה תרגילים חדשים..",
                 [
                     { text: "OK" }
                 ]
