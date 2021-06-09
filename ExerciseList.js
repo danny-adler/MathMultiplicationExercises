@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, TouchableHighlight, Text, StyleSheet, TextInput } from 'react-native';
+import { FlatList, View, TouchableHighlight, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 
 import ExerciseCard from './ExerciseCard';
@@ -97,11 +97,14 @@ function getRandomExercises(exercisesCount, leftOperandArray, rightOperandArray)
             "operator": "x",
             "equals": "=",
             "isCorrect": false,
-            "id": uuid.v4()
+            "id": uuid.v4(),
+            "exerciseTextInput_Style": "#edeeef",
         });
     }
     return temp;
 }
+
+const numberOfExercies = 2;
 
 class ExerciseList extends Component {
     state = {
@@ -110,7 +113,7 @@ class ExerciseList extends Component {
 
     componentDidMount() {
         //generateExercises();
-        const temp = getRandomExercises(5, [], []);
+        const temp = getRandomExercises(numberOfExercies, [], []);
         const exercises = temp.map(e => ({
             ...e
         }));
@@ -119,53 +122,86 @@ class ExerciseList extends Component {
 
     handleRefreshPress = () => {
         let totalResult = true;
+        const green = "#0f0";
+        const red = "#f00";
         const ex = this.state.exercises;
-        console.log("ex.length: " + ex.length);
 
         for (let index = 0; index < ex.length; index++) {
             const element = ex[index];
-            //debugger;
-            //console.log("typeof(element): " + Object.prototype.toString.call(element));
-            console.log("element.isCorrect: " + element.isCorrect);
-            console.log("element.result: " + element.result);
-
-        }
-
-        ex.forEach(element1 => {
-            //console.log("element.isCorrect: " + element1.isCorrect);
-            if (!element1.isCorrect) {
+            if (element.isCorrect) {
+                element.exerciseTextInput_Style = green;
+            }
+            else {
+                element.exerciseTextInput_Style = red;
                 totalResult = false;
             }
-        });
-        console.log("totalResult " + totalResult);
+        }
 
-        const temp = getRandomExercises(5, [], []);
-        const exercises = temp.map(e => ({
-            ...e
-        }));
-        //this.setState({ exercises });
+        if (totalResult) {
+            Alert.alert(
+                "Refresh",
+                "ענבר\nכל הכבוד!",
+                [
+                    { text: "OK" }
+                ]
+            );
+
+            const temp = getRandomExercises(numberOfExercies, [], []);
+            const exercises = temp.map(e => ({
+                ...e
+            }));
+            this.setState({ exercises });
+        } else {
+            Alert.alert(
+                "Refresh",
+                "ענבר\nיש לך טעות\nנסי שוב",
+                [
+                    { text: "OK" }
+                ]
+            );
+
+            const exercises = ex.map(e => ({
+                ...e
+            }));
+            this.setState({ exercises });
+        }
     }
 
     handleChangeResult = (value, index) => {
         //debugger;
-        this.setState({ result: value });
+        //console.log("value: " + value);
+        //console.log("index: " + index);
+
+        const temp = this.state.exercises;
+        temp[index].result = value;
 
         const green = "#0f0";
         const red = "#f00";
-        if (this.state.leftOperand * this.state.rightOperator == value) {
-            this.setState({ isCorrect: true });
-            this.setState({ exerciseTextInput_Style: green });
+        //console.log("this.state.exercises[index].leftOperand: " + this.state.exercises[index].leftOperand);
+        //console.log("this.state.exercises[index].rightOperator: " + this.state.exercises[index].rightOperator);
+        //console.log("this.state.exercises[index].result: " + this.state.exercises[index].result);
+
+        if (temp[index].leftOperand * temp[index].rightOperator == temp[index].result) {
+            //console.log("correct");
+            temp[index].isCorrect = true;
+            //temp[index].exerciseTextInput_Style = green;
         } else {
-            this.setState({ isCorrect: false });
-            this.setState({ exerciseTextInput_Style: red });
+            //console.log("incorrect");
+            temp[index].isCorrect = false;
+            //temp[index].exerciseTextInput_Style = red;
         }
+
+        const exercises = temp.map(e => ({
+            ...e
+        }));
+        this.setState({ exercises });
     }
 
     renderItem = ({ item, index }) => {
         //debugger;
-        console.log("item.id: " + item.id);
-        console.log("this.state.exercises: " + this.state.exercises[index].id);
-        console.log("this.state.exercises: " + this.state.exercises[item.id]);
+        //console.log("item.id: " + item.id);
+        //console.log("this.state.exercises: " + this.state.exercises[index].id);
+        //console.log("this.state.exercises: " + this.state.exercises[item.id]);
         return (
             <View style={styles.card} isCorrect={this.state.exercises[index].isCorrect}>
                 <View style={styles.exercisePart}>
@@ -188,7 +224,7 @@ class ExerciseList extends Component {
                         placeholder="?"
                         value={this.state.exercises[index].result}
                         keyboardType="numeric"
-                        onChangeText={this.handleChangeResult}
+                        onChangeText={value => this.handleChangeResult(value, index)}
                     />
                 </View>
             </View>
@@ -201,8 +237,9 @@ class ExerciseList extends Component {
             <FlatList
                 style={styles.list}
                 data={this.state.exercises}
-                renderItem={ this.renderItem }
-                keyExtractor={(item, index) => item.id.toString()}
+                extraData={this.state.exercises}
+                renderItem={this.renderItem}
+                keyExtractor={(item) => item.id}
             />,
             <View>
                 <TouchableHighlight

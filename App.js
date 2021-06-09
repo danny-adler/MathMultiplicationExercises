@@ -12,12 +12,10 @@ catch (e) {
 
 export default function App() {
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <Text style={{ paddingTop: 30, textAlign: "center", fontSize: 28 }}>ענבר המושלמת</Text>
-        <ExerciseList />
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={{ paddingTop: 30, textAlign: "center", fontSize: 28 }}>ענבר המושלמת</Text>
+      <ExerciseList />
+    </View>
   );
 }
 
