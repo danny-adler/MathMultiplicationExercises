@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { FlatList, View, TouchableHighlight, Text, StyleSheet, TextInput, Alert, Keyboard } from 'react-native';
 import uuid from 'react-native-uuid';
 //import Sound from 'react-native-sound';
+/*
+    sound = new Sound('motorcycle.mp3');
+
+    playSound = () => {
+        this.sound.play()
+    }
+*/
 
 /*
         const temp = [];
