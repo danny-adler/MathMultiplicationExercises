@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, TouchableHighlight, Text, StyleSheet, TextInput, Alert } from 'react-native';
+import { FlatList, View, TouchableHighlight, Text, StyleSheet, TextInput, Alert, Keyboard } from 'react-native';
 import uuid from 'react-native-uuid';
 
 import ExerciseCard from './ExerciseCard';
@@ -83,18 +83,35 @@ function getRandomInt(min /* - inclusive */, max /* - inclusive */) {
 }
 function getRandomExercises(exercisesCount, leftOperandArray, rightOperandArray) {
     const temp = [];
-    leftOperandArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-    rightOperandArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const operators = ["x", ":"];
+    leftOperandArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    rightOperandArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     for (let index = 0; index < exercisesCount; index++) {
+        const operatorIndex = getRandomInt(0, operators.length - 1);
         const leftIndex = getRandomInt(0, leftOperandArray.length - 1);
         const rightIndex = getRandomInt(0, rightOperandArray.length - 1);
+        const operator = operators[operatorIndex];
         const leftOperand = leftOperandArray[leftIndex];
         const rightOperand = rightOperandArray[rightIndex];
+        let exercise;
+
+        switch (operator) {
+            case ":":
+                const result = leftOperand * rightOperand;
+                leftOperand = result;
+                break;
+
+            case "x":
+            default:
+                // do nothing
+                break;
+        }
+
         temp.push({
             "result": "",
             "rightOperator": rightOperand,
             "leftOperand": leftOperand,
-            "operator": "x",
+            "operator": operator,
             "equals": "=",
             "isCorrect": false,
             "id": uuid.v4(),
@@ -107,17 +124,17 @@ function evaluateExercise(exercise) {
     switch (exercise.operator) {
         case "x":
             return exercise.leftOperand * exercise.rightOperator == exercise.result;
-    
+
         case ":":
             return exercise.leftOperand / exercise.rightOperator == exercise.result;
-        
+
         default:
             return null;
     }
 }
 
 
-const numberOfExercies = 2;
+const numberOfExercies = 5;
 
 class ExerciseList extends Component {
     state = {
@@ -134,6 +151,8 @@ class ExerciseList extends Component {
     }
 
     handleRefreshPress = () => {
+        Keyboard.dismiss();
+
         let totalResult = true;
         const green = "#0f0";
         const red = "#f00";
@@ -156,24 +175,25 @@ class ExerciseList extends Component {
 
         if (totalResult) {
             Alert.alert(
-                "Refresh",
+                "בדיקה",
                 "ענבר\nכל הכבוד!\nהנה תרגילים חדשים..",
                 [
-                    { text: "OK", onPress: () => {
-                        const temp = getRandomExercises(numberOfExercies, [], []);
-                        exercises = temp.map(e => ({
-                            ...e
-                        }));
-                        this.setState({ exercises });
-                    } 
-                }
+                    {
+                        text: "OK", onPress: () => {
+                            const temp = getRandomExercises(numberOfExercies, [], []);
+                            exercises = temp.map(e => ({
+                                ...e
+                            }));
+                            this.setState({ exercises });
+                        }
+                    }
                 ]
             );
 
 
         } else {
             Alert.alert(
-                "Refresh",
+                "בדיקה",
                 "ענבר\nיש לך טעות\nנסי שוב",
                 [
                     { text: "OK" }
@@ -259,7 +279,7 @@ class ExerciseList extends Component {
                 <TouchableHighlight
                     onPress={this.handleRefreshPress}
                     style={styles.button} >
-                    <Text style={styles.buttonText}>Refresh</Text>
+                    <Text style={styles.buttonText}>בדיקה</Text>
                 </TouchableHighlight>
             </View>
         ];
