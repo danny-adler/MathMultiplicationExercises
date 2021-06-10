@@ -103,6 +103,19 @@ function getRandomExercises(exercisesCount, leftOperandArray, rightOperandArray)
     }
     return temp;
 }
+function evaluateExercise(exercise) {
+    switch (exercise.operator) {
+        case "x":
+            return exercise.leftOperand * exercise.rightOperator == exercise.result;
+    
+        case ":":
+            return exercise.leftOperand / exercise.rightOperator == exercise.result;
+        
+        default:
+            return null;
+    }
+}
+
 
 const numberOfExercies = 2;
 
@@ -175,13 +188,13 @@ class ExerciseList extends Component {
         const temp = this.state.exercises;
         temp[index].result = value;
 
-        const green = "#0f0";
-        const red = "#f00";
+        //const green = "#0f0";
+        //const red = "#f00";
         //console.log("this.state.exercises[index].leftOperand: " + this.state.exercises[index].leftOperand);
         //console.log("this.state.exercises[index].rightOperator: " + this.state.exercises[index].rightOperator);
         //console.log("this.state.exercises[index].result: " + this.state.exercises[index].result);
 
-        if (temp[index].leftOperand * temp[index].rightOperator == temp[index].result) {
+        if (evaluateExercise(temp[index])) {
             //console.log("correct");
             temp[index].isCorrect = true;
             //temp[index].exerciseTextInput_Style = green;
