@@ -136,21 +136,28 @@ class ExerciseList extends Component {
                 totalResult = false;
             }
         }
+        let exercises = ex.map(e => ({
+            ...e
+        }));
+        this.setState({ exercises });
 
         if (totalResult) {
             Alert.alert(
                 "Refresh",
                 "ענבר\nכל הכבוד!\nהנה תרגילים חדשים..",
                 [
-                    { text: "OK" }
+                    { text: "OK", onPress: () => {
+                        const temp = getRandomExercises(numberOfExercies, [], []);
+                        exercises = temp.map(e => ({
+                            ...e
+                        }));
+                        this.setState({ exercises });
+                    } 
+                }
                 ]
             );
 
-            const temp = getRandomExercises(numberOfExercies, [], []);
-            const exercises = temp.map(e => ({
-                ...e
-            }));
-            this.setState({ exercises });
+
         } else {
             Alert.alert(
                 "Refresh",
@@ -159,11 +166,6 @@ class ExerciseList extends Component {
                     { text: "OK" }
                 ]
             );
-
-            const exercises = ex.map(e => ({
-                ...e
-            }));
-            this.setState({ exercises });
         }
     }
 
@@ -218,7 +220,6 @@ class ExerciseList extends Component {
                 </View>
                 <View style={styles.exercisePart}>
                     <TextInput
-                        //style={[styles.exerciseTextInput, setBorder]}
                         style={[styles.exerciseTextInput_Init, { borderColor: this.state.exercises[index].exerciseTextInput_Style }]}
                         spellCheck={false}
                         placeholder="?"
