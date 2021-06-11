@@ -2,7 +2,7 @@
   "expo": {
     "name": "Inbar The Queen",
     "slug": "InbarTheQueen",
-    "version": "1.0.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/inbar5.png",
     "splash": {
